@@ -33,3 +33,9 @@ class Task(TaskBase):
             }
         }
     }
+
+class TaskFilter(BaseModel):
+    limit : int = Field(10,gt=0,le=50)
+    offset : int = Field(0,ge=0)
+    priority : Literal["low","medium","high"] | None = None
+    
