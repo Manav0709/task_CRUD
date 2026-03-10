@@ -14,6 +14,10 @@ class User(BaseModel):
         return v.lower()
 
 
+class UserInDB(User):
+    hashed_password: str
+
+
 class TaskBase(BaseModel):
     title: str = Field(..., min_length=3, max_length=100)
     description: str | None = None
@@ -42,7 +46,7 @@ class TaskBase(BaseModel):
 
 
 class TaskCreate(TaskBase):
-    owner: User
+    pass
 
 
 class Task(TaskBase):
@@ -67,3 +71,12 @@ class TaskFilter(BaseModel):
     limit: int = Field(10, gt=0, le=50)
     offset: int = Field(0, ge=0)
     priority: Literal["low", "medium", "high"] | None = None
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: str | None = None
