@@ -1,13 +1,40 @@
-from typing import List
-from schemas import Task
+import sqlite3
+
+DB_NAME = "tasks.db"
 
 
-tasks_db: List[Task] = []
+def get_connection():
+    conn = sqlite3.connect(DB_NAME)
+    conn.row_factory = sqlite3.Row
+    return conn
 
-users_db = {
-    "manav": {
-        "username": "manav",
-        "fullname": "Manav Sharma",
-        "hashed_password": "$argon2id$v=19$m=65536,t=3,p=4$MuzT/nDD7ms+XZWTlk/eaQ$OcvoASMa2SsyOybofi+j3a1K71ny5h4hNzux6BjAnoM",
-    }
-}
+
+def init_db():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+    CREATE TABLE IF NOT EXISTS users (
+        username TEXT PRIMARY KEY,
+        fullname TEXT,
+        hashed_password TEXT
+    )
+    """
+    )
+    cursor.execute(
+        """
+    CREATE TABLE IF NOT EXISTS tasks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        description TEXT,
+        priority TEXT,
+        tags TEXT,
+        owner TEXT,
+        FOREIGN KEY(owner) REFERENCES users(username)
+    )
+    """
+    )
+
+    conn.commit()
+    conn.close()
